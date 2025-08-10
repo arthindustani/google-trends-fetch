@@ -1,1 +1,19 @@
+name: Fetch Google Trends
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # Runs daily at 6 AM UTC
+  workflow_dispatch: # allows manual run
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm install
+      - run: node index.js
 
