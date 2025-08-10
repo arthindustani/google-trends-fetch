@@ -6,7 +6,10 @@ async function fetchTrendingTopicsIndia() {
   try {
     const response = await fetch(url);
     const xml = await response.text();
-    const result = await parseStringPromise(xml);
+    const result = await parseStringPromise(xml, {
+      strict: false, // <-- make parser lenient
+      trim: true
+    });
     const items = result.rss.channel[0].item.slice(0, 5);
     console.log("\nTop 5 Trending Topics in India:");
     items.forEach((item, index) => {
@@ -18,6 +21,3 @@ async function fetchTrendingTopicsIndia() {
 }
 
 fetchTrendingTopicsIndia();
-
-
-
