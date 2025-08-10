@@ -1,12 +1,14 @@
-const googleTrends = require('google-trends-api');
+const fetch = require('node-fetch');
+const xml2js = require('xml2js');
 
 async function fetchTrendingTopics(countryCode) {
+  const url = `https://trends.google.com/trends/trendingsearches/daily/rss?geo=${countryCode}`;
   try {
-    const results = await googleTrends.dailyTrends({ geo: countryCode });
-    const data = JSON.parse(results);
-    return data.default.trendingSearchesDays[0].trendingSearches
-      .slice(0, 5)
-      .map(item => item.title.query);
+    const res = await fetch(url);
+    const xml = await res.text();
+    const parsed = await xml2js.parseStringPromise(xml);
+    const items = parsed.rss.channel[0].item.slice(0, 5);
+    return items.map(item => item.title[0]);
   } catch (err) {
     console.error(`Error fetching trends for ${countryCode}:`, err);
     return [];
@@ -26,3 +28,4 @@ async function fetchTrendingTopics(countryCode) {
     topics.forEach((topic, i) => console.log(`${i + 1}. ${topic}`));
   }
 })();
+
